@@ -1,0 +1,15 @@
+l=[[1,1,2,"g"],["g","h",2,"f"]]
+print(l)
+for i in l:
+    j=0
+    while j<len(i):
+        if type(i[j]) is str:
+            print("index {}:".format(i[j]),j)
+        j+=1
+    j=0
+    while j<len(i):
+        if type(i[j]) is str:
+            i.remove(i[j])
+            continue
+        j+=1
+print(l)
