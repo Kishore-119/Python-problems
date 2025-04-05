@@ -1,0 +1,89 @@
+LADDERS = {3: 22, 5: 8, 20: 29, 27: 34}
+SLIDES = {11: 2, 17: 4, 21: 9, 35: 19}
+END_POSITION = 36
+
+def process_game(num_players, player_names, start_player, num_gifts, gift_positions, num_dice, dice_values):
+    positions = {name: 0 for name in player_names}
+    started = {name: False for name in player_names}
+    ladders_used = {name: 0 for name in player_names}
+    slides_used = {name: 0 for name in player_names}
+    gifts_collected = {name: 0 for name in player_names}
+
+    gift_positions = set(gift_positions)
+    turn = player_names.index(start_player)
+    i = 0  
+
+    while i < len(dice_values):
+        player = player_names[turn]
+        dice = dice_values[i]
+        pos = positions[player]
+
+
+        if not started[player]:
+            if dice == 1:
+                started[player] = True
+                pos = 1
+                positions[player] = pos
+        else:
+            if pos + dice <= END_POSITION:
+                new_pos = pos + dice
+
+
+                if new_pos in SLIDES:
+                    new_pos = SLIDES[new_pos]
+                    slides_used[player] += 1
+                elif new_pos in LADDERS:
+                    new_pos = LADDERS[new_pos]
+                    ladders_used[player] += 1
+
+
+                if new_pos in positions.values():
+
+                    conflict = [p for p, v in positions.items() if v == new_pos and p != player]
+                    if conflict:
+                        positions[player] = 0
+                        started[player] = False
+                    else:
+                        positions[player] = new_pos
+                else:
+                    positions[player] = new_pos
+
+
+                if new_pos in gift_positions:
+                    gifts_collected[player] += 1
+                    gift_positions.remove(new_pos)
+
+
+                if positions[player] == END_POSITION:
+                    print_game_status(player_names, positions, ladders_used, slides_used, gifts_collected)
+                    print(player)
+                    return
+
+
+        if dice != 1 and dice != 5:
+            turn = (turn + 1) % num_players
+
+        i += 1
+
+
+    print_game_status(player_names, positions, ladders_used, slides_used, gifts_collected)
+    print("Game tie")
+
+
+def print_game_status(player_names, positions, ladders_used, slides_used, gifts_collected):
+    for player in player_names:
+        remaining = END_POSITION - positions[player]
+        print(f"{player}|{positions[player]}|{remaining}|{ladders_used[player]}|{slides_used[player]}|{gifts_collected[player]}")
+
+
+
+num_players = 2
+player_names = ["John", "Nick"]
+start_player = "John"
+num_gifts = 3
+gift_positions = [3, 10, 13]
+num_dice = 10
+dice_values = [1, 1, 6, 1, 2, 6, 1, 2, 5, 1]
+
+
+process_game(num_players, player_names, start_player, num_gifts, gift_positions, num_dice, dice_values)
