@@ -1,0 +1,19 @@
+from collections import Counter
+class Solution:
+    def maxOperations(self, nums: List[int], k: int) -> int:
+        
+        count = Counter(nums)
+        operations = 0
+
+        for num in nums:
+            if count[num] > 0 and count[k - num] > 0:
+         
+                if num == k - num and count[num] >= 2:
+                    operations += 1
+                    count[num] -= 2
+                elif num != k - num:
+                    operations += 1
+                    count[num] -= 1
+                    count[k - num] -= 1
+
+        return operations
